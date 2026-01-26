@@ -17,8 +17,9 @@ const BFF_LOCAL_URL = 'http://localhost:8080';
 // ============================================
 // SELECCIÓN AUTOMÁTICA DE URL
 // ============================================
-// En producción usa el BFF de Azure, en desarrollo usa localhost
-const BFF_BASE_URL = isProduction ? BFF_PRODUCTION_URL : BFF_LOCAL_URL;
+// En producción usa API Management, en desarrollo usa localhost
+// Cambia a BFF_PRODUCTION_URL si quieres ir directo al BFF sin API Manager
+const BFF_BASE_URL = isProduction ? API_MANAGEMENT_URL : BFF_LOCAL_URL;
 
 console.log('[API Config] Ambiente:', isProduction ? 'PRODUCCIÓN' : 'DESARROLLO');
 console.log('[API Config] BFF URL:', BFF_BASE_URL);
