@@ -1,39 +1,52 @@
-// Configuración de MSAL para Azure B2C
-// Este archivo contiene toda la configuración necesaria para conectar con Azure AD B2C
+// Configuración de MSAL para Microsoft Entra ID (Azure AD)
+// Sistema de Transporte Público - DuocUC
 
-import { 
-  BrowserCacheLocation, 
-  IPublicClientApplication, 
-  LogLevel, 
-  PublicClientApplication 
+import {
+  BrowserCacheLocation,
+  IPublicClientApplication,
+  LogLevel,
+  PublicClientApplication
 } from '@azure/msal-browser';
 
-// CONFIGURACIÓN DE AZURE B2C
-// Reemplaza estos valores con los de tu tenant
-const b2cPolicies = {
-  names: {
-    signUpSignIn: 'B2C_1_DSY2206FU', // Nombre del flujo de usuario
-  },
-  authorities: {
-    signUpSignIn: {
-      authority: 'https://Duoctenantb2ctest.b2clogin.com/Duoctenantb2ctest.onmicrosoft.com/B2C_1_DSY2206FU',
-    },
-  },
-  authorityDomain: 'Duoctenantb2ctest.b2clogin.com'
-};
+// ============================================
+// CONFIGURACIÓN DE MICROSOFT ENTRA ID
+// ============================================
 
-// Configuración de MSAL
+// Datos de tu aplicación registrada en Azure
+const tenantId = '6e4d8661-adce-488c-9d02-e8f152ee6609';
+const clientId = 'b32e213f-1949-47de-ba99-3a83a5477f28';
+
+// ============================================
+// CONFIGURAR URLS SEGÚN EL AMBIENTE
+// ============================================
+// Detectar automáticamente si estamos en producción o desarrollo
+const isProduction = window.location.hostname !== 'localhost';
+
+// URL del frontend en Azure Static Web Apps
+const PRODUCTION_URL = 'https://victorious-wave-00896350f.6.azurestaticapps.net';
+const LOCAL_URL = 'http://localhost:4200';
+
+// Selección automática de URL
+const REDIRECT_URI = isProduction ? PRODUCTION_URL : LOCAL_URL;
+
+// Configuración de MSAL para Microsoft Entra ID
 export const msalConfig = {
   auth: {
-    clientId: '9edb51ef-ce7a-4ca2-9450-ac53ee55f56a', // Application (client) ID del registro de app en B2C
-    authority: b2cPolicies.authorities.signUpSignIn.authority, // Flujo de usuario
-    knownAuthorities: [b2cPolicies.authorityDomain], // Dominio del tenant B2C
-    redirectUri: 'http://localhost:4200', // URI de redirección configurado en B2C
-    postLogoutRedirectUri: 'http://localhost:4200', // URI después del logout
+    clientId: clientId,
+    // Authority para Microsoft Entra ID (no B2C)
+    authority: `https://login.microsoftonline.com/${tenantId}`,
+    // URI de redirección después del login (detecta automáticamente)
+    redirectUri: REDIRECT_URI,
+    // URI después del logout
+    postLogoutRedirectUri: REDIRECT_URI,
+    // Navegar a la URL original después del login
+    navigateToLoginRequestUrl: true,
   },
   cache: {
-    cacheLocation: BrowserCacheLocation.LocalStorage, // Guardar tokens en localStorage
-    storeAuthStateInCookie: false, // No usar cookies (mejor para SPAs)
+    // Guardar tokens en localStorage para persistir entre pestañas
+    cacheLocation: BrowserCacheLocation.LocalStorage,
+    // No usar cookies
+    storeAuthStateInCookie: false,
   },
   system: {
     loggerOptions: {
@@ -43,42 +56,65 @@ export const msalConfig = {
         }
         switch (level) {
           case LogLevel.Error:
-            console.error(message);
+            console.error('[MSAL Error]', message);
             break;
           case LogLevel.Info:
-            console.info(message);
+            console.info('[MSAL Info]', message);
             break;
           case LogLevel.Verbose:
-            console.debug(message);
+            console.debug('[MSAL Debug]', message);
             break;
           case LogLevel.Warning:
-            console.warn(message);
+            console.warn('[MSAL Warning]', message);
             break;
         }
       },
-      logLevel: LogLevel.Verbose, // Nivel de logs para debugging
+      logLevel: LogLevel.Info, // Cambiar a LogLevel.Verbose para debugging
     }
   }
 };
 
-// Scopes que se solicitarán al hacer login
-// offline_access: permite obtener refresh tokens
-// openid: permite obtener ID token con información del usuario
-// Client ID como scope: en B2C, usar el client ID como scope permite obtener un access token
+// Scopes para el login
+// openid: obtener ID token con info del usuario
+// profile: información básica del perfil
+// email: dirección de email
+// offline_access: refresh tokens
 export const loginRequest = {
-  scopes: ['openid', 'offline_access', '9edb51ef-ce7a-4ca2-9450-ac53ee55f56a']
+  scopes: ['openid', 'profile', 'email', 'User.Read']
 };
 
-// Configuración para llamadas al backend
-// En Azure B2C, cuando no hay scopes de API específicos, el client ID se usa como scope
-// Esto permite obtener un access token que puede ser validado por el backend
+// Configuración para llamadas al Backend
 export const apiConfig = {
-  uri2: 'http://localhost:8080/api/secure', // Endpoint del backend
-  uri: 'https://7gwjxjulr6.execute-api.us-east-1.amazonaws.com/DEV3/dsy2206', // Endpoint del backend
-  scopes: ['9edb51ef-ce7a-4ca2-9450-ac53ee55f56a'] // Client ID como scope para obtener access token
+  // URL del API Management (producción)
+  uri: 'https://recurso-duoc.azure-api.net/transporte/api',
+  // URL local para desarrollo
+  uriLocal: 'http://localhost:8080/api',
+  // Scopes para acceder al backend
+  scopes: ['openid', 'profile', 'email']
 };
 
-// Instancia de MSAL que se usará en toda la aplicación
+// Configuración del Guard de MSAL
+export const msalGuardConfig = {
+  interactionType: 'redirect' as const, // o 'popup'
+  authRequest: loginRequest
+};
+
+// Configuración del Interceptor de MSAL
+export const msalInterceptorConfig = {
+  interactionType: 'redirect' as const,
+  protectedResourceMap: new Map<string, Array<string>>([
+    // Proteger llamadas al API Management (producción)
+    ['https://recurso-duoc.azure-api.net/*', ['openid', 'profile', 'email']],
+    // Proteger llamadas al BFF en Azure Container Apps
+    ['https://bff.victoriouscoast-64217b31.brazilsouth.azurecontainerapps.io/*', ['openid', 'profile', 'email']],
+    // Proteger llamadas al BFF local (desarrollo)
+    ['http://localhost:8080/api/*', ['openid', 'profile', 'email']],
+    // Microsoft Graph API (opcional)
+    ['https://graph.microsoft.com/v1.0/me', ['User.Read']]
+  ])
+};
+
+// Factory para crear la instancia de MSAL
 export function MSALInstanceFactory(): IPublicClientApplication {
   return new PublicClientApplication(msalConfig);
 }
