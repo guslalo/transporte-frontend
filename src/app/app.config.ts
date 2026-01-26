@@ -42,11 +42,14 @@ export function MSALGuardConfigFactory(): MsalGuardConfiguration {
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
 
+  // Proteger llamadas al BFF en Azure Container Apps (producción)
+  protectedResourceMap.set('https://bff.victoriouscoast-64217b31.brazilsouth.azurecontainerapps.io/*', ['api://b32e213f-1949-47de-ba99-3a83a5477f28/access_as_user']);
+
   // Proteger llamadas al API Management (producción)
-  protectedResourceMap.set('https://recurso-duoc.azure-api.net/*', ['openid', 'profile', 'email']);
+  protectedResourceMap.set('https://recurso-duoc.azure-api.net/*', ['api://b32e213f-1949-47de-ba99-3a83a5477f28/access_as_user']);
 
   // Proteger llamadas al BFF local (desarrollo)
-  protectedResourceMap.set('http://localhost:8080/api/*', ['openid', 'profile', 'email']);
+  protectedResourceMap.set('http://localhost:8080/*', ['api://b32e213f-1949-47de-ba99-3a83a5477f28/access_as_user']);
 
   // Microsoft Graph API (opcional)
   protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['User.Read']);
