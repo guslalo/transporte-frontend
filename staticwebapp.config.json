@@ -18,7 +18,7 @@
   "globalHeaders": {
     "X-Content-Type-Options": "nosniff",
     "X-Frame-Options": "DENY",
-    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://login.microsoftonline.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://login.microsoftonline.com https://*.azure-api.net https://*.azurecontainerapps.io https://*.azurestaticapps.net http://localhost:*;"
+    "Content-Security-Policy": "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://login.microsoftonline.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://login.microsoftonline.com https://*.azure-api.net https://*.azurecontainerapps.io https://*.azurestaticapps.net http://localhost:* http://34.234.136.98:*;"
   },
   "mimeTypes": {
     ".json": "application/json",
