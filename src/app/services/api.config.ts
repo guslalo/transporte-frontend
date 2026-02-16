@@ -1,22 +1,13 @@
 // ============================================
 // Configuración de APIs - Sistema de Transporte
-// Conexión directa a cada microservicio
+// Backend local
 // ============================================
 
-// Ubicación en tiempo real (AWS - siempre apunta a la IP fija)
-const TRACKING_URL = 'http://34.234.136.98:8080';
-
-// CRUD - Backend local
 const VEHICULO_BASE = 'http://localhost:8080';
 const RUTAS_BASE = 'http://localhost:8090';
 const ASIGNACION_BASE = 'http://localhost:8070';
 
 export const API_CONFIG = {
-  // Tracking en tiempo real (AWS)
-  tracking: {
-    vehiculos: `${TRACKING_URL}/api/v1/vehicles`,
-  },
-  // CRUD (backend local)
   vehiculos: {
     listar: `${VEHICULO_BASE}/vehiculos`,
     crear: `${VEHICULO_BASE}/vehiculos`,

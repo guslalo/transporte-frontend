@@ -76,15 +76,3 @@ export interface CrearHorario {
   zonaHoraria: string;
   notas?: string;
 }
-
-// Ubicación en tiempo real (AWS - RabbitMQ consumer)
-export interface UbicacionVehiculo {
-  vehicleId: string;
-  routeId: string;
-  lat: number;
-  lon: number;
-  speedKmh: number;
-  heading: number;
-  sourceTs: string;
-  updatedAt: string;
-}

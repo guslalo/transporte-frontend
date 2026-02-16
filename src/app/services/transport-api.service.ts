@@ -9,22 +9,11 @@ import {
   CrearHorario,
   Vehiculo,
   CrearVehiculo,
-  UbicacionVehiculo,
 } from '../models/transport.models';
 
 @Injectable({ providedIn: 'root' })
 export class TransportApiService {
   constructor(private http: HttpClient) {}
-
-  // ========================================
-  // TRACKING - Ubicación en tiempo real (AWS)
-  // ========================================
-
-  obtenerUbicaciones() {
-    return this.http
-      .get<UbicacionVehiculo[]>(API_CONFIG.tracking.vehiculos)
-      .pipe(catchError(() => of([])), shareReplay(1));
-  }
 
   // ========================================
   // VEHÍCULOS (localhost:8080/vehiculos)

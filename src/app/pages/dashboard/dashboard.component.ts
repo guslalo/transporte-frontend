@@ -15,7 +15,6 @@ export class DashboardComponent {
   vehiculos$ = this.api.obtenerVehiculos();
   rutas$ = this.api.obtenerRutas();
   horarios$ = this.api.obtenerHorarios();
-  ubicaciones$ = this.api.obtenerUbicaciones();
 
   estadoBadge(estado: string) {
     if (estado === 'Inactivo') {

@@ -88,8 +88,6 @@ export const msalGuardConfig = {
 export const msalInterceptorConfig = {
   interactionType: 'redirect' as const,
   protectedResourceMap: new Map<string, Array<string>>([
-    // Tracking en tiempo real (AWS)
-    ['http://34.234.136.98:8080/*', ['openid', 'profile', 'email']],
     // Microservicios locales (CRUD)
     ['http://localhost:8080/*', ['openid', 'profile', 'email']],
     ['http://localhost:8090/*', ['openid', 'profile', 'email']],

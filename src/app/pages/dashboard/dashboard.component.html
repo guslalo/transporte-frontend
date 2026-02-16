@@ -25,13 +25,6 @@
       <span class="muted">Activos</span>
     </div>
   </ng-container>
-  <ng-container *ngIf="ubicaciones$ | async as ubicaciones">
-    <div class="card">
-      <h4>En ruta</h4>
-      <strong>{{ ubicaciones.length }}</strong>
-      <span class="muted">Tracking GPS</span>
-    </div>
-  </ng-container>
 </section>
 
 <section class="grid">
@@ -69,28 +62,6 @@
         </div>
       </div>
       <p *ngIf="rutas.length === 0" class="muted">No hay rutas definidas.</p>
-    </div>
-  </div>
-</section>
-
-<section class="tracking" *ngIf="ubicaciones$ | async as ubicaciones">
-  <div class="card list">
-    <div class="list-header">
-      <h4>Ubicación en tiempo real</h4>
-      <span class="muted">Última posición conocida (AWS)</span>
-    </div>
-    <div class="list-body">
-      <div class="row" *ngFor="let ub of ubicaciones">
-        <div>
-          <strong>{{ ub.vehicleId }}</strong>
-          <span>Ruta: {{ ub.routeId }} · {{ ub.speedKmh }} km/h</span>
-        </div>
-        <div class="coords">
-          <span>{{ ub.lat.toFixed(4) }}, {{ ub.lon.toFixed(4) }}</span>
-          <span class="muted">{{ ub.updatedAt | date:'short' }}</span>
-        </div>
-      </div>
-      <p *ngIf="ubicaciones.length === 0" class="muted">No hay vehículos reportando ubicación.</p>
     </div>
   </div>
 </section>
