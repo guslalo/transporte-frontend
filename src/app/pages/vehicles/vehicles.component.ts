@@ -20,13 +20,13 @@ export class VehiclesComponent {
   vehiculos$ = this.api.obtenerVehiculos();
 
   formulario = this.fb.group({
+    id: ['', [Validators.required, Validators.minLength(2)]],
     placa: ['', [Validators.required, Validators.pattern(/^[A-Z]{2,3}-\d{3,4}$/)]],
     codigo: ['', [Validators.required, Validators.minLength(3)]],
     modelo: ['', [Validators.required]],
     capacidad: [40, [Validators.required, Validators.min(5), Validators.max(200)]],
-    ruta: ['', [Validators.required]],
     conductor: ['', [Validators.required]],
-    estado: ['En ruta', Validators.required]
+    estado: ['Activo', Validators.required]
   });
 
   enviar() {
@@ -36,7 +36,17 @@ export class VehiclesComponent {
     }
 
     this.guardando = true;
-    const datos = this.formulario.getRawValue() as CrearVehiculo;
+    const raw = this.formulario.getRawValue();
+    const datos: CrearVehiculo = {
+      id: raw.id!,
+      codigo: raw.codigo!,
+      placa: raw.placa!,
+      modelo: raw.modelo!,
+      capacidad: raw.capacidad!,
+      conductor: raw.conductor!,
+      estado: raw.estado!,
+      ocupacion: 0
+    };
 
     this.api
       .crearVehiculo(datos)
@@ -44,13 +54,13 @@ export class VehiclesComponent {
       .subscribe(() => {
         this.vehiculos$ = this.api.obtenerVehiculos();
         this.formulario.reset({
+          id: '',
           placa: '',
           codigo: '',
           modelo: '',
           capacidad: 40,
-          ruta: '',
           conductor: '',
-          estado: 'En ruta'
+          estado: 'Activo'
         });
       });
   }

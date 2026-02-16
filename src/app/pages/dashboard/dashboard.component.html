@@ -1,89 +1,96 @@
 <section class="hero">
   <div>
-    <h3>Visión general del sistema</h3>
-    <p>Controla la operación, coordina rutas y responde a incidentes en tiempo real.</p>
+    <h3>Panel principal</h3>
+    <p>Resumen de la operación: vehículos, rutas y horarios registrados.</p>
   </div>
-  <button class="btn btn-primary">Generar reporte diario</button>
 </section>
 
-<section class="stats" *ngIf="resumen$ | async as resumen">
+<section class="stats" *ngIf="vehiculos$ | async as vehiculos">
   <div class="card">
-    <h4>Vehículos activos</h4>
-    <strong>{{ resumen.vehiculosActivos }}</strong>
-    <span class="muted">Flota en operación</span>
+    <h4>Vehículos</h4>
+    <strong>{{ vehiculos.length }}</strong>
+    <span class="muted">Registrados</span>
   </div>
-  <div class="card">
-    <h4>Retrasos</h4>
-    <strong>{{ resumen.vehiculosRetrasados }}</strong>
-    <span class="muted">Casos abiertos</span>
-  </div>
-  <div class="card">
-    <h4>Puntualidad</h4>
-    <strong>{{ resumen.tasaPuntualidad }}%</strong>
-    <span class="muted">Últimas 24 horas</span>
-  </div>
-  <div class="card">
-    <h4>Pasajeros</h4>
-    <strong>{{ resumen.pasajerosHoy | number }}</strong>
-    <span class="muted">Hoy</span>
-  </div>
-  <div class="card">
-    <h4>Incidentes</h4>
-    <strong>{{ resumen.incidenciasAbiertas }}</strong>
-    <span class="muted">En seguimiento</span>
-  </div>
+  <ng-container *ngIf="rutas$ | async as rutas">
+    <div class="card">
+      <h4>Rutas</h4>
+      <strong>{{ rutas.length }}</strong>
+      <span class="muted">Definidas</span>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="horarios$ | async as horarios">
+    <div class="card">
+      <h4>Horarios</h4>
+      <strong>{{ horarios.length }}</strong>
+      <span class="muted">Activos</span>
+    </div>
+  </ng-container>
+  <ng-container *ngIf="ubicaciones$ | async as ubicaciones">
+    <div class="card">
+      <h4>En ruta</h4>
+      <strong>{{ ubicaciones.length }}</strong>
+      <span class="muted">Tracking GPS</span>
+    </div>
+  </ng-container>
 </section>
 
 <section class="grid">
-  <div class="card map">
-    <div class="map-header">
-      <h4>Mapa en tiempo real</h4>
-      <span class="muted">Actualiza cada 15 segundos</span>
-    </div>
-    <div class="map-body">
-      <div class="map-overlay">
-        <p>Integración con mapa GIS (placeholder)</p>
-        <div class="chips" *ngIf="ubicaciones$ | async as ubicaciones">
-          <span *ngFor="let ubicacion of ubicaciones">{{ ubicacion.id }}</span>
-        </div>
-      </div>
-      <div class="map-grid"></div>
-    </div>
-  </div>
-
   <div class="card list">
     <div class="list-header">
-      <h4>Flota en operación</h4>
+      <h4>Flota registrada</h4>
       <span class="muted">Estado de vehículos</span>
     </div>
     <div class="list-body" *ngIf="vehiculos$ | async as vehiculos">
       <div class="row" *ngFor="let vehiculo of vehiculos">
         <div>
           <strong>{{ vehiculo.codigo }}</strong>
-          <span>{{ vehiculo.ruta }}</span>
+          <span>{{ vehiculo.modelo }} · {{ vehiculo.conductor }}</span>
         </div>
         <span [class]="estadoBadge(vehiculo.estado)">{{ vehiculo.estado }}</span>
       </div>
+      <p *ngIf="vehiculos.length === 0" class="muted">No hay vehículos registrados.</p>
     </div>
   </div>
 
   <div class="card list">
     <div class="list-header">
-      <h4>Alertas recientes</h4>
-      <span class="muted">Prioridad operativa</span>
+      <h4>Rutas definidas</h4>
+      <span class="muted">Recorridos activos</span>
     </div>
-    <div class="list-body" *ngIf="alertas$ | async as alertas">
-      <div class="row" *ngFor="let alerta of alertas">
+    <div class="list-body" *ngIf="rutas$ | async as rutas">
+      <div class="row" *ngFor="let ruta of rutas">
         <div>
-          <strong>{{ alerta.titulo }}</strong>
-          <span>{{ alerta.descripcion }}</span>
+          <strong>{{ ruta.nombre }}</strong>
+          <span>{{ ruta.origen }} → {{ ruta.destino }}</span>
         </div>
-        <span class="badge" [class.badge-danger]="alerta.severidad === 'Alta'"
-          [class.badge-warning]="alerta.severidad === 'Media'"
-          [class.badge-success]="alerta.severidad === 'Baja'">
-          {{ alerta.severidad }}
-        </span>
+        <div class="meta">
+          <span class="chip" [style.background]="ruta.colorHex"></span>
+          <span>{{ ruta.codigo }}</span>
+        </div>
       </div>
+      <p *ngIf="rutas.length === 0" class="muted">No hay rutas definidas.</p>
+    </div>
+  </div>
+</section>
+
+<section class="tracking" *ngIf="ubicaciones$ | async as ubicaciones">
+  <div class="card list">
+    <div class="list-header">
+      <h4>Ubicación en tiempo real</h4>
+      <span class="muted">Última posición conocida (AWS)</span>
+    </div>
+    <div class="list-body">
+      <div class="row" *ngFor="let ub of ubicaciones">
+        <div>
+          <strong>{{ ub.vehicleId }}</strong>
+          <span>Ruta: {{ ub.routeId }} · {{ ub.speedKmh }} km/h</span>
+        </div>
+        <div class="coords">
+          <span>{{ ub.lat.toFixed(4) }}, {{ ub.lon.toFixed(4) }}</span>
+          <span class="muted">{{ ub.updatedAt | date:'short' }}</span>
+        </div>
+      </div>
+      <p *ngIf="ubicaciones.length === 0" class="muted">No hay vehículos reportando ubicación.</p>
     </div>
   </div>
 </section>

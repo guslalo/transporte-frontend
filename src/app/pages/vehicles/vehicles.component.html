@@ -9,6 +9,12 @@
       <h4>Nuevo vehículo</h4>
 
       <label>
+        ID
+        <input class="input" formControlName="id" placeholder="V-1001" />
+        <span class="form-error" *ngIf="errorPara('id')">{{ errorPara('id') }}</span>
+      </label>
+
+      <label>
         Placa
         <input class="input" formControlName="placa" placeholder="ABC-1234" />
         <span class="form-error" *ngIf="errorPara('placa')">{{ errorPara('placa') }}</span>
@@ -33,12 +39,6 @@
       </label>
 
       <label>
-        Ruta asignada
-        <input class="input" formControlName="ruta" placeholder="Norte Centro" />
-        <span class="form-error" *ngIf="errorPara('ruta')">{{ errorPara('ruta') }}</span>
-      </label>
-
-      <label>
         Conductor
         <input class="input" formControlName="conductor" placeholder="Valeria Soto" />
         <span class="form-error" *ngIf="errorPara('conductor')">{{ errorPara('conductor') }}</span>
@@ -47,9 +47,8 @@
       <label>
         Estado
         <select class="input" formControlName="estado">
-          <option>En ruta</option>
-          <option>En terminal</option>
-          <option>Retrasado</option>
+          <option>Activo</option>
+          <option>Inactivo</option>
           <option>Mantenimiento</option>
         </select>
       </label>
@@ -65,13 +64,13 @@
         <div class="row" *ngFor="let vehiculo of vehiculos">
           <div>
             <strong>{{ vehiculo.codigo }}</strong>
-            <span>{{ vehiculo.ruta }} · {{ vehiculo.conductor }}</span>
+            <span>{{ vehiculo.modelo }} · {{ vehiculo.conductor }}</span>
           </div>
           <div class="meta">
             <span class="plate">{{ vehiculo.placa }}</span>
-            <span class="badge" [class.badge-warning]="vehiculo.estado === 'Retrasado'"
+            <span class="badge" [class.badge-warning]="vehiculo.estado === 'Inactivo'"
               [class.badge-danger]="vehiculo.estado === 'Mantenimiento'"
-              [class.badge-success]="vehiculo.estado === 'En ruta' || vehiculo.estado === 'En terminal'">
+              [class.badge-success]="vehiculo.estado === 'Activo'">
               {{ vehiculo.estado }}
             </span>
           </div>

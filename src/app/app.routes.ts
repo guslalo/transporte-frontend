@@ -6,7 +6,6 @@ import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { VehiclesComponent } from './pages/vehicles/vehicles.component';
 import { RoutesComponent } from './pages/routes/routes.component';
 import { SchedulesComponent } from './pages/schedules/schedules.component';
-import { AlertsComponent } from './pages/alerts/alerts.component';
 
 export const routes: Routes = [
 	{ path: 'login', component: LoginComponent },
@@ -19,8 +18,7 @@ export const routes: Routes = [
 			{ path: 'dashboard', component: DashboardComponent },
 			{ path: 'vehiculos', component: VehiclesComponent },
 			{ path: 'rutas', component: RoutesComponent },
-			{ path: 'horarios', component: SchedulesComponent },
-			{ path: 'alertas', component: AlertsComponent }
+			{ path: 'horarios', component: SchedulesComponent }
 		]
 	},
 	{ path: '**', redirectTo: 'dashboard' }

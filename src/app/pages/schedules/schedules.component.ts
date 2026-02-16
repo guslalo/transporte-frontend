@@ -20,7 +20,8 @@ export class SchedulesComponent {
   horarios$ = this.api.obtenerHorarios();
 
   formulario = this.fb.group({
-    codigoRuta: ['', [Validators.required]],
+    id: ['', [Validators.required, Validators.minLength(2)]],
+    rutaCodigo: ['', [Validators.required]],
     tipoDia: ['Laboral', [Validators.required]],
     horaInicio: ['05:00', [Validators.required]],
     horaFin: ['22:30', [Validators.required]],
@@ -36,7 +37,17 @@ export class SchedulesComponent {
     }
 
     this.guardando = true;
-    const datos = this.formulario.getRawValue() as CrearHorario;
+    const raw = this.formulario.getRawValue();
+    const datos: CrearHorario = {
+      id: raw.id!,
+      rutaCodigo: raw.rutaCodigo!,
+      tipoDia: raw.tipoDia!,
+      horaInicio: raw.horaInicio!,
+      horaFin: raw.horaFin!,
+      frecuenciaMin: raw.frecuenciaMin!,
+      zonaHoraria: raw.zonaHoraria!,
+      notas: raw.notas || undefined
+    };
 
     this.api
       .crearHorario(datos)
@@ -44,7 +55,8 @@ export class SchedulesComponent {
       .subscribe(() => {
         this.horarios$ = this.api.obtenerHorarios();
         this.formulario.reset({
-          codigoRuta: '',
+          id: '',
+          rutaCodigo: '',
           tipoDia: 'Laboral',
           horaInicio: '05:00',
           horaFin: '22:30',

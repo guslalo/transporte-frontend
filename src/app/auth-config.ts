@@ -33,19 +33,13 @@ const REDIRECT_URI = isProduction ? PRODUCTION_URL : LOCAL_URL;
 export const msalConfig = {
   auth: {
     clientId: clientId,
-    // Authority para Microsoft Entra ID (no B2C)
     authority: `https://login.microsoftonline.com/${tenantId}`,
-    // URI de redirección después del login (detecta automáticamente)
     redirectUri: REDIRECT_URI,
-    // URI después del logout
     postLogoutRedirectUri: REDIRECT_URI,
-    // Navegar a la URL original después del login
     navigateToLoginRequestUrl: true,
   },
   cache: {
-    // Guardar tokens en localStorage para persistir entre pestañas
     cacheLocation: BrowserCacheLocation.LocalStorage,
-    // No usar cookies
     storeAuthStateInCookie: false,
   },
   system: {
@@ -69,33 +63,24 @@ export const msalConfig = {
             break;
         }
       },
-      logLevel: LogLevel.Info, // Cambiar a LogLevel.Verbose para debugging
+      logLevel: LogLevel.Info,
     }
   }
 };
 
 // Scopes para el login
-// openid: obtener ID token con info del usuario
-// profile: información básica del perfil
-// email: dirección de email
-// offline_access: refresh tokens
 export const loginRequest = {
   scopes: ['openid', 'profile', 'email', 'User.Read']
 };
 
 // Configuración para llamadas al Backend
 export const apiConfig = {
-  // URL del API Management (producción)
-  uri: 'https://recurso-duoc.azure-api.net/transporte/api',
-  // URL local para desarrollo
-  uriLocal: 'http://localhost:8080/api',
-  // Scopes para acceder al backend
   scopes: ['openid', 'profile', 'email']
 };
 
 // Configuración del Guard de MSAL
 export const msalGuardConfig = {
-  interactionType: 'redirect' as const, // o 'popup'
+  interactionType: 'redirect' as const,
   authRequest: loginRequest
 };
 
@@ -103,13 +88,13 @@ export const msalGuardConfig = {
 export const msalInterceptorConfig = {
   interactionType: 'redirect' as const,
   protectedResourceMap: new Map<string, Array<string>>([
-    // Proteger llamadas al API Management (producción)
-    ['https://recurso-duoc.azure-api.net/*', ['openid', 'profile', 'email']],
-    // Proteger llamadas al BFF en Azure Container Apps
-    ['https://bff.victoriouscoast-64217b31.brazilsouth.azurecontainerapps.io/*', ['openid', 'profile', 'email']],
-    // Proteger llamadas al BFF local (desarrollo)
-    ['http://localhost:8080/api/*', ['openid', 'profile', 'email']],
-    // Microsoft Graph API (opcional)
+    // Tracking en tiempo real (AWS)
+    ['http://34.234.136.98:8080/*', ['openid', 'profile', 'email']],
+    // Microservicios locales (CRUD)
+    ['http://localhost:8080/*', ['openid', 'profile', 'email']],
+    ['http://localhost:8090/*', ['openid', 'profile', 'email']],
+    ['http://localhost:8070/*', ['openid', 'profile', 'email']],
+    // Microsoft Graph API
     ['https://graph.microsoft.com/v1.0/me', ['User.Read']]
   ])
 };

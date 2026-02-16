@@ -9,9 +9,15 @@
       <h4>Nuevo horario</h4>
 
       <label>
-        Ruta
-        <input class="input" formControlName="codigoRuta" placeholder="R-NC" />
-        <span class="form-error" *ngIf="errorPara('codigoRuta')">{{ errorPara('codigoRuta') }}</span>
+        ID
+        <input class="input" formControlName="id" placeholder="H-101" />
+        <span class="form-error" *ngIf="errorPara('id')">{{ errorPara('id') }}</span>
+      </label>
+
+      <label>
+        Código de ruta
+        <input class="input" formControlName="rutaCodigo" placeholder="R-NC" />
+        <span class="form-error" *ngIf="errorPara('rutaCodigo')">{{ errorPara('rutaCodigo') }}</span>
       </label>
 
       <label>
@@ -63,7 +69,7 @@
       <div class="list-body" *ngIf="horarios$ | async as horarios">
         <div class="row" *ngFor="let horario of horarios">
           <div>
-            <strong>{{ horario.codigoRuta }} · {{ horario.tipoDia }}</strong>
+            <strong>{{ horario.rutaCodigo }} · {{ horario.tipoDia }}</strong>
             <span>{{ horario.horaInicio }} - {{ horario.horaFin }} | {{ horario.frecuenciaMin }} min</span>
           </div>
           <span class="badge badge-success">{{ horario.zonaHoraria }}</span>

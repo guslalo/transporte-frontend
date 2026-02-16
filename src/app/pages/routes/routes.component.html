@@ -9,6 +9,12 @@
       <h4>Nueva ruta</h4>
 
       <label>
+        ID
+        <input class="input" formControlName="id" placeholder="R-01" />
+        <span class="form-error" *ngIf="errorPara('id')">{{ errorPara('id') }}</span>
+      </label>
+
+      <label>
         Código
         <input class="input" formControlName="codigo" placeholder="R-NC" />
         <span class="form-error" *ngIf="errorPara('codigo')">{{ errorPara('codigo') }}</span>
@@ -46,8 +52,8 @@
 
       <label>
         Color de ruta
-        <input class="input" type="color" formControlName="color" />
-        <span class="form-error" *ngIf="errorPara('color')">{{ errorPara('color') }}</span>
+        <input class="input" type="color" formControlName="colorHex" />
+        <span class="form-error" *ngIf="errorPara('colorHex')">{{ errorPara('colorHex') }}</span>
       </label>
 
       <button class="btn btn-primary" type="submit" [disabled]="guardando">
@@ -64,7 +70,7 @@
             <span>{{ ruta.origen }} → {{ ruta.destino }}</span>
           </div>
           <div class="meta">
-            <span class="chip" [style.background]="ruta.color"></span>
+            <span class="chip" [style.background]="ruta.colorHex"></span>
             <span>{{ ruta.codigo }}</span>
           </div>
         </div>

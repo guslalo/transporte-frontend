@@ -20,13 +20,14 @@ export class RoutesComponent {
   rutas$ = this.api.obtenerRutas();
 
   formulario = this.fb.group({
+    id: ['', [Validators.required, Validators.minLength(2)]],
     codigo: ['', [Validators.required, Validators.minLength(2)]],
     nombre: ['', [Validators.required]],
     origen: ['', [Validators.required]],
     destino: ['', [Validators.required]],
     paradas: [10, [Validators.required, Validators.min(2), Validators.max(60)]],
     distanciaKm: [12, [Validators.required, Validators.min(1), Validators.max(200)]],
-    color: ['#1d4ed8', [Validators.required]]
+    colorHex: ['#1d4ed8', [Validators.required]]
   });
 
   enviar() {
@@ -36,7 +37,17 @@ export class RoutesComponent {
     }
 
     this.guardando = true;
-    const datos = this.formulario.getRawValue() as CrearRuta;
+    const raw = this.formulario.getRawValue();
+    const datos: CrearRuta = {
+      id: raw.id!,
+      codigo: raw.codigo!,
+      nombre: raw.nombre!,
+      origen: raw.origen!,
+      destino: raw.destino!,
+      paradas: raw.paradas!,
+      distanciaKm: raw.distanciaKm!,
+      colorHex: raw.colorHex!
+    };
 
     this.api
       .crearRuta(datos)
@@ -44,13 +55,14 @@ export class RoutesComponent {
       .subscribe(() => {
         this.rutas$ = this.api.obtenerRutas();
         this.formulario.reset({
+          id: '',
           codigo: '',
           nombre: '',
           origen: '',
           destino: '',
           paradas: 10,
           distanciaKm: 12,
-          color: '#1d4ed8'
+          colorHex: '#1d4ed8'
         });
       });
   }
